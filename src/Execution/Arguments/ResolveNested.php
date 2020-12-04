@@ -2,6 +2,7 @@
 
 namespace Nuwave\Lighthouse\Execution\Arguments;
 
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Nuwave\Lighthouse\Support\Contracts\ArgResolver;
 
 class ResolveNested implements ArgResolver
@@ -30,7 +31,10 @@ class ResolveNested implements ArgResolver
      */
     public function __invoke($root, $args)
     {
-        [$nestedArgs, $regularArgs] = ($this->argPartitioner)($args, $root);
+        [$nestedArgs, $regularArgs] = ($this->argPartitioner)(
+            $args,
+            $root instanceof Relation ? $root->make() : $root
+        );
 
         if ($this->previous) {
             $root = ($this->previous)($root, $regularArgs);

@@ -34,19 +34,19 @@ class NestedOneToOne implements ArgResolver
         if ($args->has('update')) {
             $updateModel = new ResolveNested(new UpdateModel(new SaveModel($relation)));
 
-            $updateModel($relation->make(), $args->arguments['update']->value);
+            $updateModel(clone $relation, $args->arguments['update']->value);
         }
 
         if ($args->has('upsert')) {
             $upsertModel = new ResolveNested(new UpsertModel(new SaveModel($relation)));
 
-            $upsertModel($relation->make(), $args->arguments['upsert']->value);
+            $upsertModel(clone $relation, $args->arguments['upsert']->value);
         }
 
         if ($args->has('delete')) {
-            $relation->getRelated()::destroy(
+            (clone $relation)->whereKey(
                 $args->arguments['delete']->toPlain()
-            );
+            )->delete();
         }
     }
 }
